@@ -1,0 +1,6 @@
+com\example\community\ArticleControllerTest.class
+com\example\community\CommunityApplicationTests.class
+com\example\community\UserControllerTest.class
+com\example\community\CommentControllerTest.class
+com\example\community\ArticleExtendedTest.class
+com\example\community\UserProfileControllerTest.class

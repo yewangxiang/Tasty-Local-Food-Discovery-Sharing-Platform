@@ -17,6 +17,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -61,10 +62,11 @@ public class SecurityConfig {
 
                     if (jwtUtil.validateToken(token)) {
                         String username = jwtUtil.extractUsername(token);
+                        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
                         UsernamePasswordAuthenticationToken authToken =
                                 new UsernamePasswordAuthenticationToken(
-                                        username, null, null
+                                        userDetails, null, userDetails.getAuthorities()
                                 );
 
                         SecurityContextHolder.getContext()

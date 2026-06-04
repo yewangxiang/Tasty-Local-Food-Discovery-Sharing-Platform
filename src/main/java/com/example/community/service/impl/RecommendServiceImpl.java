@@ -3,14 +3,12 @@ package com.example.community.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.community.dto.RecConfig;
 import com.example.community.entity.Article;
-import com.example.community.entity.UserBehavior;
 import com.example.community.mapper.ArticleExposurePoolMapper;
 import com.example.community.mapper.ArticleMapper;
 import com.example.community.mapper.UserBehaviorMapper;
 import com.example.community.service.RecommendService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -35,6 +33,7 @@ public class RecommendServiceImpl implements RecommendService {
     private final ArticleMapper articleMapper;
     private final UserBehaviorMapper behaviorMapper;
     private final ArticleExposurePoolMapper exposurePoolMapper;
+    private final ExposureLogService exposureLogService;
 
     @Override
     public List<Long> recommend(Long userId) {
@@ -70,7 +69,7 @@ public class RecommendServiceImpl implements RecommendService {
         List<Long> result = diversify(top, articles, likedOrCollected);
 
         // Step 5: 异步写曝光日志
-        asyncLogExposure(userId, result);
+        exposureLogService.logExposure(userId, result);
 
         return result;
     }
@@ -227,18 +226,6 @@ public class RecommendServiceImpl implements RecommendService {
     }
 
     // ========== 异步写曝光 ==========
-
-    @Async("recommendTaskExecutor")
-    public void asyncLogExposure(Long userId, List<Long> articleIds) {
-        for (Long aid : articleIds) {
-            UserBehavior b = new UserBehavior();
-            b.setUserId(userId);
-            b.setArticleId(aid);
-            b.setEventType(UserBehavior.EXPOSE);
-            b.setCreatedAt(LocalDateTime.now());
-            behaviorMapper.insert(b);
-        }
-    }
 
     private record ScoredArticle(Article article, double score) {}
 }

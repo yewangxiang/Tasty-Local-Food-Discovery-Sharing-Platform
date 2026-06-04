@@ -63,6 +63,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
     private ArticleExposurePoolMapper exposurePoolMapper;
 
     @Resource
+    private ArticleIndexAsyncService articleIndexAsyncService;
+
+    @Resource
     private ApplicationEventPublisher applicationEventPublisher;
 
     /**
@@ -123,7 +126,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
             final String textForEmbed = buildEmbedText(article);
             final String firstImage = (article.getImageUrls() != null && !article.getImageUrls().isEmpty())
                     ? article.getImageUrls().get(0) : null;
-            Thread.ofVirtual().start(() -> indexArticleAsync(savedId, textForEmbed, firstImage));
+            articleIndexAsyncService.indexArticle(savedId, textForEmbed, firstImage);
 
             // 触发搜索模块索引（PostIndexService 监听此事件，异步写入 posts 索引）
             applicationEventPublisher.publishEvent(new PostPublishedEvent(this, article));

@@ -3,20 +3,20 @@ spring:
     name: community
 
   datasource:
-    url: jdbc:mysql://localhost:3306/community_db?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
-    username: root
-    password: syx1433223
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:community_db}?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   data:
     redis:
-      host: localhost
-      port: 6379
-      database: 0
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      database: ${REDIS_DATABASE:0}
       timeout: 5000ms
 
   elasticsearch:
-    uris: http://localhost:9200
+    uris: ${ES_URIS:http://localhost:9200}
 
   jackson:
     time-zone: GMT+8
@@ -30,7 +30,7 @@ spring:
 
 # JWT配置
 jwt:
-  secret: your-secret-key-must-be-at-least-256-bits-long-for-hs256-algorithm-please-change-this-in-production
+  secret: ${JWT_SECRET:your-secret-key-must-be-at-least-256-bits-long-for-hs256-algorithm-please-change-this-in-production}
 
 # 文件上传配置
 # 注意：服务器启动时通过命令行参数覆盖这两项，保证路径正确：
@@ -58,7 +58,7 @@ mybatis-plus:
 
 # DashScope 云端模型服务（qwen3-vl-embedding + qwen3.6-flash）
 dashscope:
-  api-key: sk-5a94666f604d4014bf0c503ea02353aa
+  api-key: ${DASHSCOPE_API_KEY}
   llm-model: qwen3.6-flash-2026-04-16
   embedding:
     model: qwen3-vl-embedding

@@ -59,7 +59,7 @@ public class DashScopeClient {
     public float[] embedText(String text) {
         try {
             ObjectNode root = buildEmbeddingRequest();
-            root.path("input").withArray("contents").addObject().put("text", text);
+            ((ObjectNode) root.get("input")).withArray("contents").addObject().put("text", text);
             return callEmbeddingApi(mapper.writeValueAsString(root));
         } catch (Exception e) {
             log.error("DashScope embedText failed: {}", e.getMessage());
@@ -71,7 +71,7 @@ public class DashScopeClient {
     public float[] embedImageUrl(String imageUrl) {
         try {
             ObjectNode root = buildEmbeddingRequest();
-            root.path("input").withArray("contents").addObject().put("image", imageUrl);
+            ((ObjectNode) root.get("input")).withArray("contents").addObject().put("image", imageUrl);
             return callEmbeddingApi(mapper.writeValueAsString(root));
         } catch (Exception e) {
             log.error("DashScope embedImageUrl failed url={}: {}", imageUrl, e.getMessage());
@@ -84,7 +84,7 @@ public class DashScopeClient {
         try {
             String dataUri = "data:" + mimeType + ";base64," + base64;
             ObjectNode root = buildEmbeddingRequest();
-            root.path("input").withArray("contents").addObject().put("image", dataUri);
+            ((ObjectNode) root.get("input")).withArray("contents").addObject().put("image", dataUri);
             return callEmbeddingApi(mapper.writeValueAsString(root));
         } catch (Exception e) {
             log.error("DashScope embedImageBase64 failed: {}", e.getMessage());
